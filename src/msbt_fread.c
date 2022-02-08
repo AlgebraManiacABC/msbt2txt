@@ -132,6 +132,12 @@ entry_t fread_TXT(FILE *fp, bool verbose)
         puts("Memory error!");
         return NULL;
     }
+    for(int i=0; i<entry_count; i++)
+    {
+        txt_entries[i].lbl = NULL;
+        txt_entries[i].str_count = 0;
+        txt_entries[i].strs = NULL;
+    }
 
     uint * str_offsets = malloc(sizeof(uint)*entry_count);
     fread(str_offsets,sizeof(uint),entry_count,fp);
@@ -139,40 +145,72 @@ entry_t fread_TXT(FILE *fp, bool verbose)
 
     for(int i=0; i<entry_count; i++)
     {
-        txt_entries->lbl = NULL;
         fseek(fp,(str_offsets[i] + txt_start),SEEK_SET);
-        txt_entries->str_count = fread_TXT_entry(fp,txt_entries->strs,verbose);
-        if(verbose) printf("Read %d text entries\n",i+1);
+        txt_entries[i].str_count = fread_TXT_entry(fp,&(txt_entries[i].strs),verbose);
+        if(verbose) printf("Read %d text entries so far\n",i+1);
     }
+    if(verbose) printf("Read a total of %d entries.\n",entry_count);
 
+    free(str_offsets);
     return txt_entries;
 }
 
 
 
-int fread_TXT_entry(FILE *fp, char16 ** strs, bool verbose)
+int fread_TXT_entry(FILE *fp, char16 *** strs, bool verbose)
 {
+    long fpos = ftell(fp);
+    *strs = malloc(sizeof(char16*));
+    if(!(*strs))
+    {
+        puts("Memory error");
+        return -1;
+    }
     int str_count = 0;
     bool read = true;
     for(int i=0; read; i++)
     {
         str_count++;
-        strs = realloc(strs,sizeof(char16*)*(str_count));
+        *strs = realloc(*strs,sizeof(char16*)*(str_count));
+        (*strs)[i] = NULL;
         bool line = true;
         for(int j=0; line; j++)
         {
-            strs[i] = realloc(strs[i],sizeof(char16)*(j+1));
-            fread(strs[i]+j,sizeof(char16),1,fp);
-            if(strs[i][j] == '\0')
+            (*strs)[i] = realloc((*strs)[i],sizeof(char16)*(j+1));
+            fread(&(*strs)[i][j],sizeof(char16),1,fp);
+            if((*strs)[i][j] == 0x0e)
+            {
+                ushort e_group = 0;
+                ushort e_index = 0;
+                ushort e_len   = 0;
+                fread(&e_group,sizeof(ushort),1,fp);
+                fread(&e_index,sizeof(ushort),1,fp);
+                fread(&e_len  ,sizeof(ushort),1,fp);
+                (*strs)[i] = realloc((*strs)[i],sizeof(char16)*(j+1+3+(e_len/2)));
+                (*strs)[i][j+1] = e_group;
+                (*strs)[i][j+2] = e_index;
+                (*strs)[i][j+3] = e_len;
+                fread(&((*strs)[i][j+4]),sizeof(char16),e_len/2,fp);
+                j += 3 + (e_len/2);
+            }
+            if((*strs)[i][j] == '\0')
             {
                 line = false;
                 read = false;
             }
-            if(strs[i][j] == '\n')
+            if((*strs)[i][j] == '\n')
             {
-                strs[i][j] = '\0';
+                (*strs)[i][j] = '\0';
                 line = false;
             }
+        }
+        if(verbose)
+        {
+            printf("Just read \"");
+            print_utf16((*strs)[i]);
+            printf("\" (");
+            print_hex16(sizeof(char16),(*strs)[i]);
+            printf(") into string %d [fp = %lx]\n",i,fpos);
         }
     }
 
@@ -203,11 +241,15 @@ void fread_LBL(FILE *fp, entry_t txt_entries, uint txt_entry_count, bool verbose
         {
             uint8 len;
             fread(&len,sizeof(uint8),1,fp);
-            char * lbl = malloc(sizeof(char)*len);
+            char * lbl = malloc(sizeof(char)*(len+1));
+            for(int k=0; k<len+1; k++)
+                lbl[k]='\0';
             fread(lbl,sizeof(char),len,fp);
             uint idx;
             fread(&idx,sizeof(uint),1,fp);
             txt_entries[idx].lbl = lbl;
         }
     }
+    free(pair_counts);
+    free(pair_offsets);
 }

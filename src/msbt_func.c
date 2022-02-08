@@ -1,0 +1,375 @@
+#include "msbt_base.h"
+
+// Formatting
+void fprint_TXT_func_0(FILE *out, char16 *func)
+{
+    if(func[2] == 0x0003 && func[3] == 0x0002)
+    {
+        switch(func[4])
+        {
+            case 0x0000:
+                fprintf(out,"{White}");
+                break;
+            case 0x0001:
+                fprintf(out,"{Pink}");
+                break;
+            case 0x0002:
+                fprintf(out,"{Blue}");
+                break;
+            case 0x0003:
+                fprintf(out,"{Green}");
+                break;
+            case 0x0004:
+                fprintf(out,"{Orange}");
+                break;
+            case 0x0005:
+                fprintf(out,"{Gray}");
+                break;
+            case 0x0006:
+                fprintf(out,"{Red}");
+                break;
+            case 0xFFFF:
+                fprintf(out,"{Color Reset}");
+                break;
+        }
+    }
+    else if(func[2] == 0x0000)  //  Ruby
+    {
+        fprintf(out,"{ruby (charSpan %d): ",func[4]/2);
+        for(int i=0; i<(func[5]/2); i++)
+            fprintf(out,"%lc",func[6+i]);
+        fprintf(out,"}");
+    }
+    else
+        fprint_TXT_func_hex(out,func);
+}
+
+void print_TXT_func_0(char16 *func)
+{
+    fprint_TXT_func_0(stdout,func);
+}
+
+char *emote_list[]=
+{
+    "{emote: Reset}",
+    "{emote: Happiness}",
+    "{emote: Laughter}",
+    "{emote: Joy}",
+    "{emote: Love}",
+    "{emote: Glee}",
+    "{emote: Anger}",
+    "{emote: Aggravation}",
+    "{emote: Outrage}",
+    "{emote: Worry}",
+    "{emote: Sigh}",
+    "{emote: Thought}",
+    "{emote: Sadness}",
+    "{emote: Distress}",
+    "{emote: Sorrow}",
+    "{emote: Alarmed}",
+    "{emote: Surprise}",
+    "{emote: Disbelief}",
+    "{emote: Shocked}",
+    "{emote: Cold Chill}",
+    "{emote: Fearful}",
+    "{emote: Agreement}",
+    "{emote: Inspired}",
+    "{emote: Curious}",
+    "{emote: Heartbreak}",
+    "{emote: Sleepy}",
+    "{emote: Bashful}",
+    "{emote: Resigned}",
+    "{emote: Mischief}",
+    "{emote: Delight}",
+    "{emote: Sneezing}",
+    "{emote: Star Yell}",
+    "{emote: Greetings}",
+    "{emote: Pride}",
+    "{emote: HotWithSleeves}",
+    "{emote: Glare}",
+    "{emote: Sheepishness}",
+    "{emote: Soft Smile}",
+    "{emote: Sunny}",
+    "{emote: Shyness}",
+    "{emote: Disagreement}",
+    "{emote: Mistaken}",
+    "{emote: Flourish}",
+    "{emote: Daydreaming}",
+    "{emote: Showmanship}",
+    "{emote: Sleep Bubble}",
+    "{emote: Shrunk Funk Shuffle}",
+    "{emote: Lie Down}",
+    "{Resetti emote: Aggravated}",
+    "{Resetti emote: Worry-Resetti}",
+    "{Resetti emote: Cold Chill}",
+    "{Resetti emote: Surprise}",
+    "{Resetti emote: Annoyed}",
+    "{Resetti emote: Sad Laugh}",
+    "{Resetti emote: Outrage}",
+    "{Resetti emote: Thought}",
+    "{Police emote: Salute}",
+    "{emote: x39}",
+    "{emote: x3A}",
+    "{Nat emote: Surprise}",
+    "{emote: Distress [Beeping]}",
+    "{Katrina emote: YEEEEEEE}",
+    "{Katrina emote: Fortune2}",
+    "{Chip emote: Examine Fish}",
+    "{emote: BoxShale}"
+};
+
+// Reactions
+void fprint_TXT_func_3(FILE *out, char16 *func)
+{
+    fprintf(out,"%s",emote_list[func[2]]);
+}
+
+void print_TXT_func_3(char16 *func)
+{
+    printf("%s",emote_list[func[2]]);
+}
+
+// Numbers
+void fprint_TXT_func_4(FILE *out, char16 *func)
+{
+    switch(func[2])
+    {
+        case 0x0000:
+            fprintf(out,"{Year}");
+            break;
+        case 0x0001:
+            fprintf(out,"{Month}");
+            break;
+        case 0x0002:
+            fprintf(out,"{Day}");
+            break;
+        case 0x0003:
+            fprintf(out,"{Hour}");
+            break;
+        case 0x0004:
+            fprintf(out,"{Minutes}");
+            break;
+        case 0x0006:
+            fprintf(out,"{Number (0x6)}");
+            break;
+        case 0x0007:
+            fprintf(out,"{Number (0x7)}");
+            break;
+        case 0x0008:
+            fprintf(out,"{Number (0x8)}");
+            break;
+        case 0x0009:
+            fprintf(out,"{Number (0x9)}");
+            break;
+        case 0x000a:
+            fprintf(out,"{Number (0xa)}");
+            break;
+        case 0x000f:
+            if(func[3] == 0x0002)
+                fprintf(out,"{Date-%4.4x}",func[4]);
+            else
+                fprint_TXT_func_hex(out,func);
+            break;
+        default:
+            fprint_TXT_func_hex(out,func);
+            break;
+    }
+}
+
+void print_TXT_func_4(char16 *func)
+{
+    fprint_TXT_func_4(stdout,func);
+}
+
+// Names
+void fprint_TXT_func_5(FILE *out, char16 *func)
+{
+    switch(func[2])
+    {
+        case 0x0000:
+            fprintf(out,"{Player name}");
+            break;
+        case 0x0001:
+            fprintf(out,"{Villager's name (orange)}");
+            break;
+        case 0x0005:
+            fprintf(out,"{Town name (pink)}");
+            break;
+        case 0x0006:
+            fprintf(out,"{Town name (pink)}");
+            break;
+        case 0x0007:
+            fprintf(out,"{catchphrase}");
+            break;
+        case 0x0008:
+            fprintf(out,"{Player nickname (green)}");
+            break;
+        case 0x0009:
+            fprintf(out,"{Day of week}");
+            break;
+        case 0x000a:
+            if(func[3] == 0x0002 && func[4] == 0xcd00)
+                fprintf(out,"{Player rumor}");
+            else
+                fprint_TXT_func_hex(out,func);
+            break;
+        case 0x0016:
+            fprintf(out,"{am/pm}");
+            break;
+        default:
+            fprint_TXT_func_hex(out,func);
+            break;
+    }
+}
+
+void print_TXT_func_5(char16 *func)
+{
+    fprint_TXT_func_5(stdout,func);
+}
+
+// Pauses
+void fprint_TXT_func_7(FILE *out, char16 *func)
+{
+    switch(func[2])
+    {
+        case 0x0000:
+            if(func[3] == 0x0004)
+                fprintf(out,"{pause %d}",func[4]);
+            else
+                fprint_TXT_func_hex(out,func);
+            break;
+        case 0x0001:
+            if(func[3] == 0x0000)
+                fprintf(out,"{Wait for input}");
+            else
+                fprint_TXT_func_hex(out,func);
+            break;
+        case 0x0006:
+            fprintf(out,"{Greeting begin}");
+            break;
+        case 0x0007:
+            fprintf(out,"{Greeting end}");
+            break;
+        default:
+            fprint_TXT_func_hex(out,func);
+            break;
+    }
+}
+
+void print_TXT_func_7(char16 *func)
+{
+    fprint_TXT_func_7(stdout,func);
+}
+
+// Questions
+void fprint_TXT_func_8(FILE *out, char16 *func)
+{
+    switch(func[2])
+    {
+        case 0x0000:
+        case 0x0001:
+        case 0x0005:
+        case 0x0006:
+        case 0x0008:
+            fprintf(out,"{Player can respond: %4.4x",func[2]);
+            for(int i=0; i<func[3]; i++)
+                fprintf(out,"-%2.2x",((char*)func)[8+i]);
+            fprintf(out,"}");
+            break;
+        default:
+            fprint_TXT_func_hex(out,func);
+            break;
+    }
+}
+
+void print_TXT_func_8(char16 *func)
+{
+    fprint_TXT_func_8(stdout,func);
+}
+
+// Misc
+void fprint_TXT_func_d(FILE *out, char16 *func)
+{
+    switch(func[2])
+    {
+        case 0x0007:
+            if(func[3] == 0x0000)
+                fprintf(out,"{singK}");
+            else
+                fprint_TXT_func_hex(out,func);
+            break;
+        case 0x0008:
+            if(func[3] == 0x0002)
+                fprintf(out,"{confirmation-%4.4x}",func[4]);
+            else
+                fprint_TXT_func_hex(out,func);
+            break;
+        default:
+            fprint_TXT_func_hex(out,func);
+            break;
+    }
+}
+
+void print_TXT_func_d(char16 *func)
+{
+    fprint_TXT_func_d(stdout,func);
+}
+
+// Misc
+void fprint_TXT_func_e(FILE *out, char16 *func)
+{
+    switch(func[2])
+    {
+        case 0x0000:
+        {
+            if(func[3] == 0x0004)
+            {
+                char *gender[]={"","m","f"};
+                fprintf(out,"{%s<indef%d><def%d>}",
+                    gender[(int)((char*)func)[8]], ((char*)func)[9], ((char*)func)[10]);
+            }
+            else
+                fprint_TXT_func_hex(out,func);
+            break;
+        }
+        case 0x0002:
+            fprintf(out,"{Article(word-dependant)}");
+            break;
+        case 0x0003:
+            fprintf(out,"{capitalized}");
+            break;
+        case 0x0009:
+        case 0x000a:
+            fprint_TXT_func_word(out,func);
+            break;
+        default:
+            fprint_TXT_func_hex(out,func);
+            break;
+    }
+}
+
+void print_TXT_func_e(char16 *func)
+{
+    fprint_TXT_func_e(stdout,func);
+}
+
+void fprint_TXT_func_word(FILE *out, char16 *func)
+{
+    int letter_count = func[3]/2;
+    fprintf(out,"{");
+    for(int i=0; i<letter_count; i++)
+    {
+        if(func[4+i] == 0xcd00)
+            continue;
+        else if(func[4+i] < 32)
+            fprintf(out,"<%2.2x>",func[4+i]);
+        else
+            fprintf(out,"%lc",func[4+i]);
+    }
+    fprintf(out,"}");
+}
+
+void print_TXT_func_word(char16 *func)
+{
+    fprint_TXT_func_word(stdout,func);
+}

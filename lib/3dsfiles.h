@@ -73,3 +73,33 @@ bool isUMSBTfile(const char * filename);
  * Returns false if not
  */
 bool isMSBTfile(const char * filename);
+
+/**
+ * Prints a UTF-16 string to stdout. (No extra newline)
+ * 
+ */
+void print_utf16(const char16 * str);
+
+/**
+ * Prints a UTF-16 string to file. (No extra newline)
+ * 
+ */
+void fprint_utf16(FILE *out, const char16 * str);
+
+/**
+ * Prints a string of bytes as hexadecimal.
+ * Stops when a chunk of data is all 0.
+ */
+void print_hex16(ulong byte_len, const char16 * str);
+
+/**
+ * Prints a string of bytes as hexadecimal to file.
+ * Stops when a chunk of data is all 0.
+ */
+void fprint_hex16(FILE *out, ulong byte_len, const char16 * str);
+
+/**
+ * Returns the length of the char16 string
+ * 
+ */
+int strlen16(const char16 * str);

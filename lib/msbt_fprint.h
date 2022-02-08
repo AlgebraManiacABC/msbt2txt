@@ -31,13 +31,7 @@ void fprint_remake_UMSBT(FILE *out, UMSBT_t colorB, UMSBT_t colorF, bool verbose
 void fprint_remake_MSBT(FILE *out, MSBT_t colorB, MSBT_t colorF, bool verbose);
 
 /**
- * Prints two UMSBT_t's in the form of a "Remake Table"
+ * Prints two text entries in the form of a "Remake Table" to the output file
  * 
  */
-void print_remake_UMSBT(UMSBT_t colorB, UMSBT_t colorF, bool verbose);
-
-/**
- * Prints two MSBT_t's in the form of a "Remake Table"
- * 
- */
-void print_remake_MSBT(MSBT_t colorB, MSBT_t colorF, bool verbose);
+void fprint_remake_TXT_entry(FILE *out, entry_t t_b, entry_t t_f, bool verbose);

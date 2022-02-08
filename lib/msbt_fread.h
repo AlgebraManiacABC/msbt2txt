@@ -30,7 +30,7 @@ entry_t fread_TXT(FILE *fp, bool verbose);
  * Assumes the file position is directly at the start of a text entry string
  * File position is undefined after calling this function.
  */
-int fread_TXT_entry(FILE *fp, char16 * strs[], bool verbose);
+int fread_TXT_entry(FILE *fp, char16 ** strs[], bool verbose);
 
 /**
  * Reads a LBL section and adds labels to the TXT entry_t array.
