@@ -29,6 +29,7 @@ void print_TXT_entry(entry_t t, bool verbose)
     for(int i=0; i<t->str_count; i++)
     {
         printf("\t");
+        fflush(stdout);
         print_TXT_str(t->strs[i]);
     }
 }
@@ -45,5 +46,5 @@ void print_remake_MSBT(MSBT_t colorB, MSBT_t colorF, bool verbose)
 
 void print_remake_TXT_entry(entry_t t_b, entry_t t_f, bool verbose)
 {
-    fprint_remake_TXT_entry(stdout,t_b,t_f,verbose);
+    fprint_remake_TXT_entry(stdout,t_b,t_f,1,verbose);
 }

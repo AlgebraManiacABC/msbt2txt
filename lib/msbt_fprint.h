@@ -34,4 +34,4 @@ void fprint_remake_MSBT(FILE *out, MSBT_t colorB, MSBT_t colorF, bool verbose);
  * Prints two text entries in the form of a "Remake Table" to the output file
  * 
  */
-void fprint_remake_TXT_entry(FILE *out, entry_t t_b, entry_t t_f, bool verbose);
+void fprint_remake_TXT_entry(FILE *out, entry_t t_b, entry_t t_f, int entry_id, bool verbose);

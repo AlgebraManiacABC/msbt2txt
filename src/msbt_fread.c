@@ -170,11 +170,11 @@ int fread_TXT_entry(FILE *fp, char16 *** strs, bool verbose)
     bool read = true;
     for(int i=0; read; i++)
     {
-        str_count++;
-        *strs = realloc(*strs,sizeof(char16*)*(str_count));
+        *strs = realloc(*strs,sizeof(char16*)*(i+1));
         (*strs)[i] = NULL;
         bool line = true;
-        for(int j=0; line; j++)
+        int j=0;
+        for(j=0; line; j++)
         {
             (*strs)[i] = realloc((*strs)[i],sizeof(char16)*(j+1));
             fread(&(*strs)[i][j],sizeof(char16),1,fp);
@@ -204,6 +204,8 @@ int fread_TXT_entry(FILE *fp, char16 *** strs, bool verbose)
                 line = false;
             }
         }
+        //if(j>1)
+            str_count++;
         if(verbose)
         {
             printf("Just read \"");

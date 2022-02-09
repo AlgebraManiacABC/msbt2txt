@@ -6,6 +6,8 @@ void fprint_TXT_str(FILE *out, char16 * str)
     {
         if(str[i] == 0x000e)
             i += fprint_TXT_func(out,str+i);
+        else if(str[i] == 0xe000)
+            fprintf(out,"%lc",0x24b6);
         else
             fprintf(out,"%lc",str[i]);
     }

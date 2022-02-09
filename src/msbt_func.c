@@ -39,6 +39,7 @@ void fprint_TXT_func_0(FILE *out, char16 *func)
         for(int i=0; i<(func[5]/2); i++)
             fprintf(out,"%lc",func[6+i]);
         fprintf(out,"}");
+        //fprintf(stderr,"Skipping ruby...\n");
     }
     else
         fprint_TXT_func_hex(out,func);
@@ -324,9 +325,10 @@ void fprint_TXT_func_e(FILE *out, char16 *func)
         {
             if(func[3] == 0x0004)
             {
-                char *gender[]={"","m","f"};
-                fprintf(out,"{%s<indef%d><def%d>}",
-                    gender[(int)((char*)func)[8]], ((char*)func)[9], ((char*)func)[10]);
+                char gender[]={'-','m','f','-'};
+                fprintf(out,"{%c",gender[(int)((char*)func)[8]]);
+                fprintf(out,"<indef%d>",((char*)func)[9]);
+                fprintf(out,"<def%d>}",((char*)func)[10]);
             }
             else
                 fprint_TXT_func_hex(out,func);
@@ -338,6 +340,7 @@ void fprint_TXT_func_e(FILE *out, char16 *func)
         case 0x0003:
             fprintf(out,"{capitalized}");
             break;
+        case 0x0006:
         case 0x0009:
         case 0x000a:
             fprint_TXT_func_word(out,func);
@@ -359,12 +362,16 @@ void fprint_TXT_func_word(FILE *out, char16 *func)
     fprintf(out,"{");
     for(int i=0; i<letter_count; i++)
     {
-        if(func[4+i] == 0xcd00)
-            continue;
-        else if(func[4+i] < 32)
-            fprintf(out,"<%2.2x>",func[4+i]);
-        else
-            fprintf(out,"%lc",func[4+i]);
+        int num = 4+i;
+        int sub_count = func[num]/2;
+        for(int j=0; j<sub_count; j++, i++)
+        {
+            if(func[num+j+1] < 32)
+                fprintf(out,"<%4.4x>",func[num+j+1]);
+            else
+                fprintf(out,"%lc",func[num+j+1]);
+        }
+        if(i<letter_count-1) fprintf(out,"/");
     }
     fprintf(out,"}");
 }
