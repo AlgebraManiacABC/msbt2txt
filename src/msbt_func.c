@@ -3,46 +3,65 @@
 // Formatting
 void fprint_TXT_func_0(FILE *out, char16 *func)
 {
-    if(func[2] == 0x0003 && func[3] == 0x0002)
+    switch(func[2])
     {
-        switch(func[4])
-        {
-            case 0x0000:
-                fprintf(out,"{White}");
-                break;
-            case 0x0001:
-                fprintf(out,"{Pink}");
-                break;
-            case 0x0002:
-                fprintf(out,"{Blue}");
-                break;
-            case 0x0003:
-                fprintf(out,"{Green}");
-                break;
-            case 0x0004:
-                fprintf(out,"{Orange}");
-                break;
-            case 0x0005:
-                fprintf(out,"{Gray}");
-                break;
-            case 0x0006:
-                fprintf(out,"{Red}");
-                break;
-            case 0xFFFF:
-                fprintf(out,"{Color Reset}");
-                break;
-        }
+        case 0x0000:    //  Ruby
+            fprintf(out,"{ruby (charSpan %d): ",func[4]/2);
+            for(int i=0; i<(func[5]/2); i++)
+                fprintf(out,"%lc",func[6+i]);
+            fprintf(out,"}");
+            //fprintf(stderr,"Skipping ruby...\n");
+            break;
+        case 0x0002:
+            if(func[3]==0x0002)
+                fprintf(out,"{Text size %hu%%}",func[4]);
+            else
+                fprint_TXT_func_hex(out,func);
+            break;
+        case 0x0003:
+            if(func[3]==0x0002)
+            {
+                switch(func[4])
+                {
+                    case 0x0000:
+                        fprintf(out,"{White}");
+                        break;
+                    case 0x0001:
+                        fprintf(out,"{Pink}");
+                        break;
+                    case 0x0002:
+                        fprintf(out,"{Blue}");
+                        break;
+                    case 0x0003:
+                        fprintf(out,"{Green}");
+                        break;
+                    case 0x0004:
+                        fprintf(out,"{Orange}");
+                        break;
+                    case 0x0005:
+                        fprintf(out,"{Gray}");
+                        break;
+                    case 0x0006:
+                        fprintf(out,"{Red}");
+                        break;
+                    case 0xFFFF:
+                        fprintf(out,"{Color Reset}");
+                        break;
+                }
+            }
+            else
+                fprint_TXT_func_hex(out,func);
+            break;
+        case 0x0004:
+            if(!func[3])
+                fprintf(out,"{Wait for input}");
+            else
+                fprint_TXT_func_hex(out,func);
+            break;
+        default:
+            fprint_TXT_func_hex(out,func);
+            break;
     }
-    else if(func[2] == 0x0000)  //  Ruby
-    {
-        fprintf(out,"{ruby (charSpan %d): ",func[4]/2);
-        for(int i=0; i<(func[5]/2); i++)
-            fprintf(out,"%lc",func[6+i]);
-        fprintf(out,"}");
-        //fprintf(stderr,"Skipping ruby...\n");
-    }
-    else
-        fprint_TXT_func_hex(out,func);
 }
 
 void print_TXT_func_0(char16 *func)
@@ -251,6 +270,12 @@ void fprint_TXT_func_7(FILE *out, char16 *func)
         case 0x0007:
             fprintf(out,"{Greeting end}");
             break;
+        case 0x0009:
+            if(func[3] == 0x0004)
+                fprintf(out,"{Wait <%4.4x %4.4x> 'time'}",func[4],func[5]);
+            else
+                fprint_TXT_func_hex(out,func);
+            break;
         default:
             fprint_TXT_func_hex(out,func);
             break;
@@ -364,6 +389,16 @@ void print_TXT_func_e(char16 *func)
     fprint_TXT_func_e(stdout,func);
 }
 
+void fprint_TXT_func_12(FILE *out, char16 *func)
+{
+    fprint_TXT_func_hex(out,func);
+}
+
+void print_TXT_func_12(char16 *func)
+{
+    fprint_TXT_func_12(stdout,func);
+}
+
 void fprint_TXT_func_word(FILE *out, char16 *func)
 {
     int total_char16_count = func[3]/2;
@@ -371,6 +406,7 @@ void fprint_TXT_func_word(FILE *out, char16 *func)
     int i=0;
     if( (func[args_index_0] & 0xcd00) == 0xcd00 )
         i++;
+    fprintf(out,"{");
     while(i<total_char16_count)
     {
         int subword_letter_count = func[args_index_0+i]/2;

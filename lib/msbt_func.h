@@ -97,6 +97,18 @@ void fprint_TXT_func_e(FILE *out, char16 * func);
 void print_TXT_func_e(char16 * func);
 
 /**
+ * Prints text functions with command group "0012" to file.
+ * 
+ */
+void fprint_TXT_func_12(FILE *out, char16 * func);
+
+/**
+ * Prints text functions with command group "0012".
+ * 
+ */
+void print_TXT_func_12(char16 * func);
+
+/**
  * Prints a word (within a function) to file
  * 
  */
