@@ -214,7 +214,7 @@ int fread_TXT_str(FILE *fp, char16 ** str, bool verbose)
                 string_end_reached = true;
                 string[str_index] = '\0';
                 str_type = CONTINUE;
-                printf("%lc\n",0x2424);
+                //printf("%lc\n",0x2424);
                 break;
             case '\0':
                 string_end_reached = true;
@@ -223,19 +223,19 @@ int fread_TXT_str(FILE *fp, char16 ** str, bool verbose)
                     str_type = EMPTY;
                 else
                     str_type = STOP;
-                printf("%lc\n",0x2400);
+                //printf("%lc\n",0x2400);
                 break;
             case 0x000e:    //  Func
             {
                 string[str_index] = chr;
                 int offset = fread_TXT_func(fp,&string,str_index,verbose);
                 str_index += offset + 1;
-                printf("%lc[%d]",0x240e,offset);
+                //printf("%lc[%d]",0x240e,offset);
                 break;
             }
             default:    //  Regular old char16
                 string[str_index++] = chr;
-                printf(".");
+                //printf(".");
                 break;
         }
 
