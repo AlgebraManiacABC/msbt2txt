@@ -33,6 +33,20 @@ entry_t fread_TXT(FILE *fp, bool verbose);
 int fread_TXT_entry(FILE *fp, char16 ** strs[], bool verbose);
 
 /**
+ * Reads a single TXT string (newline or null terminated).
+ * Turns newlines into null terminators
+ * Assumes file position is directly at the start of a string
+ * File position ends directly following the final null terminator
+ */
+int fread_TXT_str(FILE *fp, char16 ** str, bool verbose);
+
+/**
+ * Reads a TXT function into the middle of a string
+ * Returns function length (in 2-byte terms, excluding initial 0x000e, which has already been read)
+ */
+int fread_TXT_func(FILE *fp, char16 ** str, int start_index, bool verbose);
+
+/**
  * Reads a LBL section and adds labels to the TXT entry_t array.
  * Assumes the file position is at 0x10 bytes after the beginning of the LBL file magic.
  * File position does not change after calling this function.

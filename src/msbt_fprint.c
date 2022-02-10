@@ -64,16 +64,6 @@ void fprint_remake_TXT_entry(FILE *out, entry_t t_b, entry_t t_f, int entry_id,b
     {
         for(int j=0; j<t_f->str_count; j++)
         {
-            /*
-            if(t_b->lbl)
-                fprintf(out,"%d\t%s\t",i,t_b->lbl);
-            else
-                fprintf(out,"%d\t\"\"\t",i);
-            if(t_f->lbl)
-                fprintf(out,"%d\t%s\t",j,t_f->lbl);
-            else
-                fprintf(out,"%d\"\"\t",j);
-            */
             fprintf(out,"%d\t",entry_id);
 
             fprint_TXT_str(out,t_b->strs[i]);

@@ -159,67 +159,109 @@ entry_t fread_TXT(FILE *fp, bool verbose)
 
 int fread_TXT_entry(FILE *fp, char16 *** strs, bool verbose)
 {
-    long fpos = ftell(fp);
-    *strs = malloc(sizeof(char16*));
-    if(!(*strs))
-    {
-        puts("Memory error");
-        return -1;
-    }
+    char16 **strings = NULL;
+
     int str_count = 0;
-    bool read = true;
-    for(int i=0; read; i++)
+    int str_instruction;    //  -1 = Empty; 0 = newline term.; 1 = null term.
+    do
     {
-        *strs = realloc(*strs,sizeof(char16*)*(i+1));
-        (*strs)[i] = NULL;
-        bool line = true;
-        int j=0;
-        for(j=0; line; j++)
-        {
-            (*strs)[i] = realloc((*strs)[i],sizeof(char16)*(j+1));
-            fread(&(*strs)[i][j],sizeof(char16),1,fp);
-            if((*strs)[i][j] == 0x0e)
-            {
-                ushort e_group = 0;
-                ushort e_index = 0;
-                ushort e_len   = 0;
-                fread(&e_group,sizeof(ushort),1,fp);
-                fread(&e_index,sizeof(ushort),1,fp);
-                fread(&e_len  ,sizeof(ushort),1,fp);
-                (*strs)[i] = realloc((*strs)[i],sizeof(char16)*(j+1+3+(e_len/2)));
-                (*strs)[i][j+1] = e_group;
-                (*strs)[i][j+2] = e_index;
-                (*strs)[i][j+3] = e_len;
-                fread(&((*strs)[i][j+4]),sizeof(char16),e_len/2,fp);
-                j += 3 + (e_len/2);
-            }
-            if((*strs)[i][j] == '\0')
-            {
-                line = false;
-                read = false;
-            }
-            if((*strs)[i][j] == '\n')
-            {
-                (*strs)[i][j] = '\0';
-                line = false;
-            }
-        }
-        //if(j>1)
-            str_count++;
+        strings = realloc(strings,sizeof(char16*)*(str_count+1));
+        str_instruction = fread_TXT_str(fp,&(strings[str_count]),verbose);
+        
         if(verbose)
         {
-            printf("Just read \"");
-            print_utf16((*strs)[i]);
-            printf("\" (");
-            print_hex16(sizeof(char16),(*strs)[i]);
-            printf(") into string %d [fp = %lx]\n",i,fpos);
+            if(str_instruction >= 0)
+            {
+                printf("Finished reading \"");
+                print_TXT_str(strings[str_count]);
+                printf("\" into strings[%d]\n",str_count);
+            }
+            else
+                printf("String was empty.\n");
         }
-    }
+
+        if(str_instruction >= 0)
+            str_count++;
+
+    }   while(str_instruction == 0);
 
     if(verbose) printf("Read %d strings into this entry\n",str_count);
+    if(str_count == 0)
+    {
+        free(strings);
+        (*strs) = NULL;
+    }
+    else
+        (*strs) = strings;
     return str_count;
 }
 
+int fread_TXT_str(FILE *fp, char16 ** str, bool verbose)
+{
+    char16 * string = NULL;
+
+    int str_index = 0;
+    enum str_instructions{CONTINUE, STOP, EMPTY=-1} str_type = CONTINUE;
+    bool string_end_reached = false;
+    do
+    {
+        char16 chr;
+        fread(&chr,sizeof(char16),1,fp);
+        string = realloc(string,sizeof(char16)*(str_index+1));
+        switch(chr)
+        {
+            case '\n':    //  Newline
+                string_end_reached = true;
+                string[str_index] = '\0';
+                str_type = CONTINUE;
+                printf("%lc\n",0x2424);
+                break;
+            case '\0':
+                string_end_reached = true;
+                string[str_index] = '\0';
+                if(str_index == 0)
+                    str_type = EMPTY;
+                else
+                    str_type = STOP;
+                printf("%lc\n",0x2400);
+                break;
+            case 0x000e:    //  Func
+            {
+                string[str_index] = chr;
+                int offset = fread_TXT_func(fp,&string,str_index,verbose);
+                str_index += offset + 1;
+                printf("%lc[%d]",0x240e,offset);
+                break;
+            }
+            default:    //  Regular old char16
+                string[str_index++] = chr;
+                printf(".");
+                break;
+        }
+
+    } while (!string_end_reached);
+    
+
+    (*str) = string;
+    return str_type;
+}
+
+int fread_TXT_func(FILE *fp, char16 **str, int start_index, bool verbose)
+{
+    ushort cmd_info[3]={0}; //  [0]=group;  [1]=index;  [2]=argsize(bytes);
+    fread(cmd_info,sizeof(ushort),3,fp);
+    ushort arg_len = cmd_info[2] / 2; // argsize in 'doubytes';
+    (*str) = realloc(*str,(start_index+4+arg_len)*sizeof(char16));
+    (*str)[start_index+1] = cmd_info[0];
+    (*str)[start_index+2] = cmd_info[1];
+    (*str)[start_index+3] = cmd_info[2];
+    if(arg_len)
+    {
+        fread(&((*str)[start_index+4]),sizeof(char16),arg_len,fp);
+    }
+
+    return (arg_len + 3);
+}
 
 
 void fread_LBL(FILE *fp, entry_t txt_entries, uint txt_entry_count, bool verbose)

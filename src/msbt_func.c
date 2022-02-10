@@ -272,11 +272,18 @@ void fprint_TXT_func_8(FILE *out, char16 *func)
         case 0x0005:
         case 0x0006:
         case 0x0008:
-            fprintf(out,"{Player can respond: %4.4x",func[2]);
-            for(int i=0; i<func[3]; i++)
-                fprintf(out,"-%2.2x",((char*)func)[8+i]);
+        {
+            fprintf(out,"{Player can respond (%4.4x):",func[2]);
+            int arg_count = func[3]/2;
+            for(int i=0; i<arg_count; i++)
+            {
+                fprintf(out,"%4.4x",func[4+i]);
+                if(i<(arg_count)-1)
+                    fprintf(out,"-");
+            }
             fprintf(out,"}");
             break;
+        }
         default:
             fprint_TXT_func_hex(out,func);
             break;
@@ -301,7 +308,7 @@ void fprint_TXT_func_d(FILE *out, char16 *func)
             break;
         case 0x0008:
             if(func[3] == 0x0002)
-                fprintf(out,"{confirmation-%4.4x}",func[4]);
+                fprintf(out,"{confirmation-%2.2x}",func[4]-0xcd00);
             else
                 fprint_TXT_func_hex(out,func);
             break;
@@ -341,6 +348,7 @@ void fprint_TXT_func_e(FILE *out, char16 *func)
             fprintf(out,"{capitalized}");
             break;
         case 0x0006:
+        case 0x0008:
         case 0x0009:
         case 0x000a:
             fprint_TXT_func_word(out,func);
@@ -358,20 +366,22 @@ void print_TXT_func_e(char16 *func)
 
 void fprint_TXT_func_word(FILE *out, char16 *func)
 {
-    int letter_count = func[3]/2;
-    fprintf(out,"{");
-    for(int i=0; i<letter_count; i++)
+    int total_char16_count = func[3]/2;
+    int args_index_0 = 4;
+    int i=0;
+    if( (func[args_index_0] & 0xcd00) == 0xcd00 )
+        i++;
+    while(i<total_char16_count)
     {
-        int num = 4+i;
-        int sub_count = func[num]/2;
-        for(int j=0; j<sub_count; j++, i++)
+        int subword_letter_count = func[args_index_0+i]/2;
+        i++;
+        for(int j=0; j<subword_letter_count; j++)
         {
-            if(func[num+j+1] < 32)
-                fprintf(out,"<%4.4x>",func[num+j+1]);
-            else
-                fprintf(out,"%lc",func[num+j+1]);
+            fprintf(out,"%lc",func[args_index_0+i+j]);
         }
-        if(i<letter_count-1) fprintf(out,"/");
+        i += subword_letter_count;
+        if(i<total_char16_count)
+            fprintf(out,"/");
     }
     fprintf(out,"}");
 }
