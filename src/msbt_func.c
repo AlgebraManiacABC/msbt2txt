@@ -6,12 +6,19 @@ void fprint_TXT_func_0(FILE *out, char16 *func)
     switch(func[2])
     {
         case 0x0000:    //  Ruby
-            fprintf(out,"{ruby (charSpan %d): ",func[4]/2);
-            for(int i=0; i<(func[5]/2); i++)
+        {
+            ushort lo_span = func[4]/2;
+            ushort hi_span = func[5]/2;
+            fprintf(out,"<");
+            for(int i=0; i<hi_span; i++)
                 fprintf(out,"%lc",func[6+i]);
-            fprintf(out,"}");
+            fprintf(out,"/");
+            for(int i=0; i<lo_span; i++)
+                fprintf(out,"%lc",func[6+hi_span+i]);
+            fprintf(out,">");
             //fprintf(stderr,"Skipping ruby...\n");
             break;
+        }
         case 0x0002:
             if(func[3]==0x0002)
                 fprintf(out,"{Text size %hu%%}",func[4]);

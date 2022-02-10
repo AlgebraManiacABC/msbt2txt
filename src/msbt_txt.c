@@ -136,6 +136,11 @@ int fprint_TXT_func(FILE *out, char16 * func)
     {
         case 0x0000:
             fprint_TXT_func_0(out,func);
+            if(func[2]=='\0')   //  Denotes ruby or furigana
+            {
+                func_len += func[4]/2;  //  How many extra characters to ignore
+                                        //  (they've been printed by the func)
+            }
             break;
         case 0x0003:
             fprint_TXT_func_3(out,func);
