@@ -1,6 +1,6 @@
 #include "msbt_base.h"
 
-UMSBT_t fread_UMSBT(FILE *fp, bool verbose)
+UMSBT_t fread_UMSBT(FILE *fp, bool ASR, bool verbose)
 {
     UMSBT_t u = malloc(sizeof(UMSBT_struct));
     if(!u)
@@ -36,7 +36,7 @@ UMSBT_t fread_UMSBT(FILE *fp, bool verbose)
         if(verbose)
             printf("Reading MSBT file at offset %x\n",section_offsets[i]);
         fseek(fp,section_offsets[i],SEEK_SET);
-        u->msbt_list[i] = fread_MSBT(fp,verbose);
+        u->msbt_list[i] = fread_MSBT(fp,ASR,verbose);
     }
 
     if(verbose)
@@ -47,7 +47,7 @@ UMSBT_t fread_UMSBT(FILE *fp, bool verbose)
 
 
 
-MSBT_t fread_MSBT(FILE *fp, bool verbose)
+MSBT_t fread_MSBT(FILE *fp, bool ASR, bool verbose)
 {
     MSBT_t m = malloc(sizeof(MSBT_struct));
     if(!m)
@@ -106,7 +106,7 @@ MSBT_t fread_MSBT(FILE *fp, bool verbose)
 
     fseek(fp,text_start,SEEK_SET);
     if(verbose) puts("Now reading text section");
-    m->txt_entries = fread_TXT(fp,verbose);
+    m->txt_entries = fread_TXT(fp,ASR,verbose);
 
     if(label_start)
     {
@@ -121,7 +121,7 @@ MSBT_t fread_MSBT(FILE *fp, bool verbose)
 
 
 
-entry_t fread_TXT(FILE *fp, bool verbose)
+entry_t fread_TXT(FILE *fp, bool ASR, bool verbose)
 {
     long txt_start = ftell(fp);
     uint entry_count;
@@ -141,12 +141,12 @@ entry_t fread_TXT(FILE *fp, bool verbose)
 
     uint * str_offsets = malloc(sizeof(uint)*entry_count);
     fread(str_offsets,sizeof(uint),entry_count,fp);
-    if(verbose) printf("Read %d offsets. Onto reading strings.\n",entry_count);
+    if(verbose) printf("Read %d offsets. Onto reading the entries located there.\n",entry_count);
 
     for(int i=0; i<entry_count; i++)
     {
         fseek(fp,(str_offsets[i] + txt_start),SEEK_SET);
-        txt_entries[i].str_count = fread_TXT_entry(fp,&(txt_entries[i].strs),verbose);
+        txt_entries[i].str_count = fread_TXT_entry(fp,&(txt_entries[i].strs),ASR,verbose);
         if(verbose) printf("Read %d text entries so far\n",i+1);
     }
     if(verbose) printf("Read a total of %d entries.\n",entry_count);
@@ -157,7 +157,7 @@ entry_t fread_TXT(FILE *fp, bool verbose)
 
 
 
-int fread_TXT_entry(FILE *fp, char16 *** strs, bool verbose)
+int fread_TXT_entry(FILE *fp, char16 *** strs, bool ASR, bool verbose)
 {
     char16 **strings = NULL;
 
@@ -166,7 +166,7 @@ int fread_TXT_entry(FILE *fp, char16 *** strs, bool verbose)
     do
     {
         strings = realloc(strings,sizeof(char16*)*(str_count+1));
-        str_instruction = fread_TXT_str(fp,&(strings[str_count]),verbose);
+        str_instruction = fread_TXT_str(fp,&(strings[str_count]),ASR,verbose);
         
         if(verbose)
         {
@@ -196,50 +196,95 @@ int fread_TXT_entry(FILE *fp, char16 *** strs, bool verbose)
     return str_count;
 }
 
-int fread_TXT_str(FILE *fp, char16 ** str, bool verbose)
+int fread_TXT_str(FILE *fp, char16 ** str, bool ASR, bool verbose)
 {
     char16 * string = NULL;
 
     int str_index = 0;
     enum str_instructions{CONTINUE, STOP, EMPTY=-1} str_type = CONTINUE;
     bool string_end_reached = false;
-    do
+    if(ASR)
     {
-        char16 chr;
-        fread(&chr,sizeof(char16),1,fp);
-        string = realloc(string,sizeof(char16)*(str_index+1));
-        switch(chr)
+        do
         {
-            case '\n':    //  Newline
-                string_end_reached = true;
-                string[str_index] = '\0';
-                str_type = CONTINUE;
-                //printf("%lc\n",0x2424);
-                break;
-            case '\0':
-                string_end_reached = true;
-                string[str_index] = '\0';
-                if(str_index == 0)
-                    str_type = EMPTY;
-                else
-                    str_type = STOP;
-                //printf("%lc\n",0x2400);
-                break;
-            case 0x000e:    //  Func
+            char chr;
+            fread(&chr,sizeof(char),1,fp);
+            string = realloc(string,sizeof(char16)*(str_index+1));
+            switch(chr)
             {
-                string[str_index] = chr;
-                int offset = fread_TXT_func(fp,&string,str_index,verbose);
-                str_index += offset + 1;
-                //printf("%lc[%d]",0x240e,offset);
-                break;
+                case '\n':    //  Newline
+                    string_end_reached = true;
+                    string[str_index] = '\0';
+                    str_type = CONTINUE;
+                    //printf("%lc\n",0x2424);
+                    break;
+                case '\0':
+                    string_end_reached = true;
+                    string[str_index] = '\0';
+                    if(str_index == 0)
+                        str_type = EMPTY;
+                    else
+                        str_type = STOP;
+                    //printf("%lc\n",0x2400);
+                    break;
+                case 0x0e:    //  Func
+                {
+                    fprintf(stderr,"RED ALERT! ASR FILE CONTAINS UNEXPECTED TEXT FUNCTION! ABORT!\n");
+                    exit(EXIT_FAILURE);
+                    string[str_index] = chr;
+                    int offset = fread_TXT_func(fp,&string,str_index,verbose);
+                    str_index += offset + 1;
+                    //printf("%lc[%d]",0x240e,offset);
+                    break;
+                }
+                default:    //  Regular old char16
+                    string[str_index++] = chr;
+                    //printf(".");
+                    break;
             }
-            default:    //  Regular old char16
-                string[str_index++] = chr;
-                //printf(".");
-                break;
-        }
 
-    } while (!string_end_reached);
+        } while (!string_end_reached);
+    }
+    else
+    {
+        do
+        {
+            char16 chr;
+            fread(&chr,sizeof(char16),1,fp);
+            string = realloc(string,sizeof(char16)*(str_index+1));
+            switch(chr)
+            {
+                case '\n':    //  Newline
+                    string_end_reached = true;
+                    string[str_index] = '\0';
+                    str_type = CONTINUE;
+                    //printf("%lc\n",0x2424);
+                    break;
+                case '\0':
+                    string_end_reached = true;
+                    string[str_index] = '\0';
+                    if(str_index == 0)
+                        str_type = EMPTY;
+                    else
+                        str_type = STOP;
+                    //printf("%lc\n",0x2400);
+                    break;
+                case 0x000e:    //  Func
+                {
+                    string[str_index] = chr;
+                    int offset = fread_TXT_func(fp,&string,str_index,verbose);
+                    str_index += offset + 1;
+                    //printf("%lc[%d]",0x240e,offset);
+                    break;
+                }
+                default:    //  Regular old char16
+                    string[str_index++] = chr;
+                    //printf(".");
+                    break;
+            }
+
+        } while (!string_end_reached);
+    }
     
 
     (*str) = string;

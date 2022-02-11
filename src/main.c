@@ -24,11 +24,14 @@ int main(int argc, char * argv[])
         return EXIT_FAILURE;
     }
 
+    bool ASR = isASRfile(input_filename);
+    /*
     if(isASRfile(input_filename))
     {
         printf("Sorry, ASR (Automated Speech Recognition) files are not currently supported.\n");
         return EXIT_FAILURE;
     }
+    */
 
     int opt;
     optind++;   //  Skip filename
@@ -156,14 +159,14 @@ int main(int argc, char * argv[])
     if(isUMSBTfile(input_filename))
     {
         if(do_remake_list)
-            u_remake = fread_UMSBT(f_remake,verbose);
-        u_in = fread_UMSBT(f_in,verbose);
+            u_remake = fread_UMSBT(f_remake,ASR,verbose);
+        u_in = fread_UMSBT(f_in,ASR,verbose);
     }
     else
     {
         if(do_remake_list)
-            m_remake = fread_MSBT(f_remake,verbose);
-        m_in = fread_MSBT(f_in,verbose);
+            m_remake = fread_MSBT(f_remake,ASR,verbose);
+        m_in = fread_MSBT(f_in,ASR,verbose);
     }
 
     //  Files have been read! They can be closed.

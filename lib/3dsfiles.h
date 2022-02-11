@@ -25,6 +25,7 @@ typedef struct __entry_struct
     char * lbl;
     char16 ** strs;
     int str_count;
+    bool ASR;
 
 }   entry_struct;
 
@@ -34,6 +35,7 @@ typedef struct __MSBT_struct
 {
     uint txt_entry_count;
     entry_t txt_entries;
+    bool ASR;
 
 }   MSBT_struct;
 
@@ -43,6 +45,7 @@ typedef struct __UMSBT_struct
 {
     int msbt_count;
     MSBT_t * msbt_list;
+    bool ASR;
 
 }   UMSBT_struct;
 

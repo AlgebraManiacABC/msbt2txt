@@ -6,7 +6,7 @@
  * Assumes the file position is 0.
  * File position is undefined after calling this function.
  */
-UMSBT_t fread_UMSBT(FILE *fp, bool verbose);
+UMSBT_t fread_UMSBT(FILE *fp, bool ASR, bool verbose);
 
 /**
  * Reads an MSBT file/subfile into the MSBT_t type.
@@ -14,7 +14,7 @@ UMSBT_t fread_UMSBT(FILE *fp, bool verbose);
  * Assumes the file position is directly at the beginning of the MSBT file magic.
  * File position is undefined after calling this function.
  */
-MSBT_t fread_MSBT(FILE *fp, bool verbose);
+MSBT_t fread_MSBT(FILE *fp, bool ASR, bool verbose);
 
 /**
  * Reads a TXT section into an entry_t array.
@@ -22,7 +22,7 @@ MSBT_t fread_MSBT(FILE *fp, bool verbose);
  * File position is undefined after calling this function.
  * Returns the array, which should be freed with "free_TXT()"
  */
-entry_t fread_TXT(FILE *fp, bool verbose);
+entry_t fread_TXT(FILE *fp, bool ASR, bool verbose);
 
 /**
  * Reads a single TXT entry into an array of strings.
@@ -30,7 +30,7 @@ entry_t fread_TXT(FILE *fp, bool verbose);
  * Assumes the file position is directly at the start of a text entry string
  * File position is undefined after calling this function.
  */
-int fread_TXT_entry(FILE *fp, char16 ** strs[], bool verbose);
+int fread_TXT_entry(FILE *fp, char16 ** strs[], bool ASR, bool verbose);
 
 /**
  * Reads a single TXT string (newline or null terminated).
@@ -38,7 +38,7 @@ int fread_TXT_entry(FILE *fp, char16 ** strs[], bool verbose);
  * Assumes file position is directly at the start of a string
  * File position ends directly following the final null terminator
  */
-int fread_TXT_str(FILE *fp, char16 ** str, bool verbose);
+int fread_TXT_str(FILE *fp, char16 ** str, bool ASR, bool verbose);
 
 /**
  * Reads a TXT function into the middle of a string
