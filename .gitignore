@@ -2,3 +2,5 @@
 *.txt
 .vs*
 *msbt
+build*
+msbt2txt

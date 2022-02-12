@@ -32,10 +32,11 @@ int main(int argc, char * argv[])
         return EXIT_FAILURE;
     }
     */
+   bool simple = false;
 
     int opt;
     optind++;   //  Skip filename
-    while( (opt = getopt(argc,argv,":o:r:v")) != -1)
+    while( (opt = getopt(argc,argv,":o:r:vs")) != -1)
     {
         switch(opt)
         {
@@ -53,6 +54,10 @@ int main(int argc, char * argv[])
 
             case 'v':
                 verbose = true;
+                break;
+
+            case 's':
+                simple = true;
                 break;
 
             case ':':
@@ -144,6 +149,7 @@ int main(int argc, char * argv[])
                 fclose(f_remake);
             }
             fclose(f_in);
+            return EXIT_FAILURE;
         }
     }
 
@@ -184,14 +190,14 @@ int main(int argc, char * argv[])
             if(do_remake_list)
                 fprint_remake_UMSBT(f_out,u_in,u_remake,verbose);
             else
-                fprint_UMSBT(f_out,u_in,verbose);
+                fprint_UMSBT(f_out,u_in,simple,verbose);
         }
         else
         {
             if(do_remake_list)
                 print_remake_UMSBT(u_in,u_remake,verbose);
             else
-                print_UMSBT(u_in,verbose);
+                print_UMSBT(u_in,simple,verbose);
         }
     }
     else
@@ -201,14 +207,14 @@ int main(int argc, char * argv[])
             if(do_remake_list)
                 fprint_remake_MSBT(f_out,m_in,m_remake,verbose);
             else
-                fprint_MSBT(f_out,m_in,verbose);
+                fprint_MSBT(f_out,m_in,simple,verbose);
         }
         else
         {
             if(do_remake_list)
                 print_remake_MSBT(m_in,m_remake,verbose);
             else
-                print_MSBT(m_in,verbose);
+                print_MSBT(m_in,simple,verbose);
         }
     }
 

@@ -1,36 +1,40 @@
 #include "msbt_base.h"
 
-void print_UMSBT(UMSBT_t u, bool verbose)
+void print_UMSBT(UMSBT_t u, bool simple, bool verbose)
 {
     for(int i=0; i<u->msbt_count; i++)
     {
         printf("== %d ==\n",i);
-        print_MSBT(u->msbt_list[i],verbose);
+        print_MSBT(u->msbt_list[i],simple,verbose);
         if(i<(u->msbt_count-1)) puts("");
     }
 }
 
-void print_MSBT(MSBT_t m, bool verbose)
+void print_MSBT(MSBT_t m, bool simple, bool verbose)
 {
     for(int i=0; i<m->txt_entry_count; i++)
     {
-        print_TXT_entry(m->txt_entries + i,verbose);
+        print_TXT_entry(m->txt_entries + i,simple,verbose);
         puts("");
     }
 }
 
-void print_TXT_entry(entry_t t, bool verbose)
+void print_TXT_entry(entry_t t, bool simple, bool verbose)
 {
-    if(t->lbl)
-        printf("\"%s\"",t->lbl);
-    else
-        printf("\"\"");
+    if(!simple)
+    {
+        if(t->lbl)
+            printf("\"%s\"",t->lbl);
+        else
+            printf("\"\"");
+    }
 
     for(int i=0; i<t->str_count; i++)
     {
-        printf("\t");
+        if(!simple) printf("\t");
         fflush(stdout);
-        print_TXT_str(t->strs[i]);
+        print_TXT_str(t->strs[i], simple);
+        if(simple) printf(" ");
     }
 }
 

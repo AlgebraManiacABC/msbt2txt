@@ -4,19 +4,19 @@
  * Prints the data of a UMSBT_t type created by fread_UMSBT() to the output file
  * 
  */
-void fprint_UMSBT(FILE *out, UMSBT_t u, bool verbose);
+void fprint_UMSBT(FILE *out, UMSBT_t u, bool simple, bool verbose);
 
 /**
  * Prints the data of a single MSBT_t type created by fread_MSBT() to the output file
  * 
  */
-void fprint_MSBT(FILE *out, MSBT_t m, bool verbose);
+void fprint_MSBT(FILE *out, MSBT_t m, bool simple, bool verbose);
 
 /**
  * Prints a single TXT entry, complete with label (if it exists) to the output file
  * 
  */
-void fprint_TXT_entry(FILE *out, entry_t t, bool verbose);
+void fprint_TXT_entry(FILE *out, entry_t t, bool simple, bool verbose);
 
 /**
  * Prints two UMSBT_t's in the form of a "Remake Table" to the output file

@@ -61,7 +61,7 @@ void fprint_TXT_func_0(FILE *out, char16 *func)
             break;
         case 0x0004:
             if(!func[3])
-                fprintf(out,"{Wait for input}");
+                fprintf(out,"{Wait for input - page break}");
             else
                 fprint_TXT_func_hex(out,func);
             break;
@@ -142,7 +142,7 @@ char *emote_list[]=
     "{Katrina emote: YEEEEEEE}",
     "{Katrina emote: Fortune2}",
     "{Chip emote: Examine Fish}",
-    "{emote: BoxShale}"
+    "{emote: BoxShake}"
 };
 
 // Reactions

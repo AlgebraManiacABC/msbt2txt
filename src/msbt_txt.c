@@ -1,13 +1,13 @@
 #include "msbt_base.h"
 
-void fprint_TXT_str(FILE *out, char16 * str)
+void fprint_TXT_str(FILE *out, char16 * str, bool simple)
 {
     for(int i=0; str[i]; i++)
     {
         switch(str[i])
         {
             case 0x000e:
-                i += fprint_TXT_func(out,str+i);    //  Function
+                i += fprint_TXT_func(out,str+i,simple);    //  Function
                 break;
             case 0xe000:
             case 0xe042:
@@ -127,9 +127,17 @@ void fprint_TXT_str(FILE *out, char16 * str)
     }
 }
 
-int fprint_TXT_func(FILE *out, char16 * func)
+int fprint_TXT_func(FILE *out, char16 * func, bool simple)
 {
     int func_len = 3 + (func[3]/2);
+    if(simple)
+    {
+        if(func[1]==0x0000 && func[2]==0x0000)  //  WILL SKIP RUBY CHARS
+            func_len += func[4]/2;
+        if(func[1]==0x0000 && func[2]==0x0004 && func[3]==0x0000)
+            fprintf(out,"\t");
+        return func_len;
+    }
     //fprintf(stderr,"func_len = %d\n",func_len);
 
     switch(func[1])
@@ -189,20 +197,14 @@ void fprint_TXT_func_hex(FILE *out, char16 * func)
         fprintf(out,"}");
 }
 
-void print_TXT_str(char16 * str)
+void print_TXT_str(char16 * str, bool simple)
 {
-    for(int i=0; str[i]; i++)
-    {
-        if(str[i] == 0x000e)
-            i += print_TXT_func(str+i);
-        else
-            printf("%lc",str[i]);
-    }
+    fprint_TXT_str(stdout,str,simple);
 }
 
-int print_TXT_func(char16 * func)
+int print_TXT_func(char16 * func, bool simple)
 {
-    int func_len = fprint_TXT_func(stdout,func);
+    int func_len = fprint_TXT_func(stdout,func,simple);
     return func_len;
 }
 

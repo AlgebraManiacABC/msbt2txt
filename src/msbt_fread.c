@@ -173,7 +173,7 @@ int fread_TXT_entry(FILE *fp, char16 *** strs, bool ASR, bool verbose)
             if(str_instruction >= 0)
             {
                 printf("Finished reading \"");
-                print_TXT_str(strings[str_count]);
+                print_TXT_str(strings[str_count],0);
                 printf("\" into strings[%d]\n",str_count);
             }
             else
