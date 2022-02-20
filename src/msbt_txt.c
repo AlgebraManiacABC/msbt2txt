@@ -132,8 +132,12 @@ int fprint_TXT_func(FILE *out, char16 * func, bool simple)
     int func_len = 3 + (func[3]/2);
     if(simple)
     {
-        if(func[1]==0x0000 && func[2]==0x0000)  //  WILL SKIP RUBY CHARS
+        if(func[1]==0x0000 && func[2]==0x0000)  //  Will print only ruby chars
+        {
+            for(int i=0; i<(func[5]/2); i++)
+                fprintf(out,"%lc",func[6+i]);
             func_len += func[4]/2;
+        }
         if(func[1]==0x0000 && func[2]==0x0004 && func[3]==0x0000)
             fprintf(out,"\t");
         return func_len;

@@ -89,7 +89,7 @@ MSBT_t fread_MSBT(FILE *fp, bool ASR, bool verbose)
         {
             text_start = ftell(fp);
             fread(&m->txt_entry_count,sizeof(uint),1,fp);
-            fseek(fp,(-1*sizeof(uint)),SEEK_CUR);
+            fseek(fp,(-1*(long int)sizeof(uint)),SEEK_CUR);
             if(verbose) printf("Text section found at %lx\n",text_start-0x10);
         }
         fseek(fp,section_size,SEEK_CUR);

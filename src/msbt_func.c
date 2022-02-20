@@ -193,7 +193,7 @@ void fprint_TXT_func_4(FILE *out, char16 *func)
             break;
         case 0x000f:
             if(func[3] == 0x0002)
-                fprintf(out,"{Date-%4.4x}",func[4]);
+                fprintf(out,"{Date-%2.2x}",func[4]-0xcd00);
             else
                 fprint_TXT_func_hex(out,func);
             break;

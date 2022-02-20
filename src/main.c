@@ -105,7 +105,7 @@ int main(int argc, char * argv[])
 
     if(verbose)
         printf("Opening %s (input)\n",input_filename);
-    FILE * f_in = fopen(input_filename,"r");
+    FILE * f_in = fopen(input_filename,"rb");
     if(!f_in)
     {
         printf("%s (input) could not be opened.\n",input_filename);
@@ -121,7 +121,7 @@ int main(int argc, char * argv[])
     {
         if(verbose)
             printf("Opening %s (colorF)\n",colorF_filename);
-        f_remake = fopen(colorF_filename,"r");
+        f_remake = fopen(colorF_filename,"rb");
         if(!f_remake)
         {
             printf("%s (colorF) could not be opened.\n",colorF_filename);
