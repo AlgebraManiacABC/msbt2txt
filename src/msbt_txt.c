@@ -6,153 +6,133 @@ void fprint_TXT_str(FILE *out, char16 * str, bool simple)
     //bool space_to_tab = false;
     for(int i=0; str[i]; i++)
     {
-    /*
-        if(just_printed_space && str[i] == 0x20)
-        {
-            space_to_tab = true;
-            continue;
-        }
-        if(space_to_tab && str[i] != 0x20)
-        {
-            space_to_tab = false;
-            fprintf(out,"\t");
-        }
-        if(just_printed_space && str[i] != 0x20)
-        {
-            just_printed_space = false;
-        }
-    */
 
         switch(str[i])
         {
             case 0x000e:
                 i += fprint_TXT_func(out,str+i,simple);    //  Function
                 break;
-            /*
-            case 0x0020:
-                fprintf(out," ");           //  Space button, but if multiple appear, use a tab instead.
-                just_printed_space = true;
-                break;
-            */
+            
+            //  Symbols:
             case 0xe000:
             case 0xe042:
-                fprintf(out,"%lc",0x24b6);  //  A button
+                fprint_wide(out,0x24b6);    //  A button
                 break;
             case 0xe001:
-                fprintf(out,"%lc",0x24b7);  //  B button
+                fprint_wide(out,0x24b7);  //  B button
                 break;
             case 0xe002:
-                fprintf(out,"%lc",0x24cd);  //  X button
+                fprint_wide(out,0x24cd);  //  X button
                 break;
             case 0xe003:
-                fprintf(out,"%lc",0x24ce);  //  Y button
+                fprint_wide(out,0x24ce);  //  Y button
                 break;
             case 0xe004:
             case 0xe07b:
-                fprintf(out,"%lc",0x24c1);  //  L button
+                fprint_wide(out,0x24c1);  //  L button
                 break;
             case 0xe005:
             case 0xe07c:
-                fprintf(out,"%lc",0x24c7);  //  R button
+                fprint_wide(out,0x24c7);  //  R button
                 break;
             case 0xe006:
-                fprintf(out,"%lc",0x2795);  //  D-pad
+                fprint_wide(out,0x2795);  //  D-pad
                 break;
             case 0xe008:
             case 0xe06d:
-                fprintf(out,"%lc",0x03b1);  //  Amiibo (left)
+                fprint_wide(out,0x03b1);  //  Amiibo (left)
                 break;
             case 0xe009:
             case 0xe06e:
-                fprintf(out,"%lc",0x204e);  //  Amiibo (right)
+                fprint_wide(out,0x204e);  //  Amiibo (right)
                 break;
             case 0xe00c:
-                fprintf(out,"%lc",0x1f431); //  Initiative/CAT icon
+                fprint_wide(out,0x1f431); //  Initiative/CAT icon
                 break;
             case 0xe015:
-                fprintf(out,"%lc",0x2660);  //  Spades
+                fprint_wide(out,0x2660);  //  Spades
                 break;
             case 0xe016:
-                fprintf(out,"%lc",0x2666);  //  Diamonds
+                fprint_wide(out,0x2666);  //  Diamonds
                 break;
             case 0xe017:
-                fprintf(out,"%lc",0x2665);  //  Hearts
+                fprint_wide(out,0x2665);  //  Hearts
                 break;
             case 0xe018:
-                fprintf(out,"%lc",0x2663);  //  Clubs
+                fprint_wide(out,0x2663);  //  Clubs
                 break;
             case 0xe020:
-                fprintf(out,"%lc",0x1f4Bc);  //  Pockets icon
+                fprint_wide(out,0x1f4Bc);  //  Pockets icon
                 break;
             case 0xe021:
-                fprintf(out,"%lc",0x270f);  //  Patterns icon
+                fprint_wide(out,0x270f);  //  Patterns icon
                 break;
             case 0xe022:
-                fprintf(out,"%lc",0x1f56e);  //  Encyclopedia icon
+                fprint_wide(out,0x1f56e);  //  Encyclopedia icon
                 break;
             case 0xe023:
-                fprintf(out,"%lc",0x1f464);  //  TPC icon (head)
+                fprint_wide(out,0x1f464);  //  TPC icon (head)
                 break;
             case 0xe024:
             case 0xe031:
-                fprintf(out,"%lc",0x2764);  //  Best friend icon
+                fprint_wide(out,0x2764);  //  Best friend icon
                 break;
             case 0xe028:
-                fprintf(out,"%lc",0x1f98b); //  Butterfly
+                fprint_wide(out,0x1f98b); //  Butterfly
                 break;
             case 0xe029:
-                fprintf(out,"%lc",0x1f41f); //  Fish
+                fprint_wide(out,0x1f41f); //  Fish
                 break;
             case 0xe02a:
-                fprintf(out,"%lc",0x1f419); //  Octopus
+                fprint_wide(out,0x1f419); //  Octopus
                 break;
             case 0xe02d:
-                fprintf(out,"%lc",0x2716);  //  Dig-spot (x)
+                fprint_wide(out,0x2716);  //  Dig-spot (x)
                 break;
             case 0xe033:
-                fprintf(out,"lc",0x266a);   //  Eighth note
+                fprint_wide(out,0x266a);   //  Eighth note (♪)
                 break;
             case 0xe034:
-                fprintf(out,"%lc",0x266b);  //  Double eighth note
+                fprint_wide(out,0x266b);  //  Double eighth note
                 break;
             case 0xe037:
-                fprintf(out,"%lc",0x26a0);  //  Warning sign
+                fprint_wide(out,0x26a0);  //  Warning sign
                 break;
             case 0xe038:
-                //fprintf(out,"%lc",0x1f465);  //  Three heads left (ignore)
+                //fprint_wide(out,0x1f465);  //  Three heads left (ignore)
                 break;
             case 0xe039:
-                fprintf(out,"%lc",0x1f465); //  Three heads right (print)
+                fprint_wide(out,0x1f465); //  Three heads right (print)
                 break;
             case 0xe068:
-                fprintf(out,"%lc%lc",0x1d49,0x02b3);    //  Small 'er' modifier
+                fprint_wide(out,0x1d49);    //  Small 'er' modifier
+                fprint_wide(out,0x02b3);
                 break;
             case 0xe069:
-                fprintf(out,"%lc%lc",0x02b3,0x1d49);    //  Small 're' modifier
-                break;
+                fprint_wide(out,0x02b3);    //  Small 're' modifier (falls onto next case)
             case 0xe06a:
-                fprintf(out,"%lc",0x1d49);  //  Small 'e' modifier
+                fprint_wide(out,0x1d49);  //  Small 'e' modifier
                 break;
             case 0xe073:
-                fprintf(out,"%lc",0x1f3e0); //  HOME icon
+                fprint_wide(out,0x1f3e0); //  HOME icon
                 break;
             case 0xe075:
-                fprintf(out,"%lc",0xffe0);  //  Play coin icon
+                fprint_wide(out,0xffe0);  //  Play coin icon
                 break;
             case 0xe077:
-                fprintf(out,"%lc",0x274d);  //  Circle pad
+                fprint_wide(out,0x274d);  //  Circle pad
                 break;
             case 0xe078:
-                fprintf(out,"%lc",0x2622);  //  Power button (Radioactive)
+                fprint_wide(out,0x2622);  //  Power button (Radioactive)
                 break;
             case 0xe079:
-                fprintf(out,"%lc",0x2191);  //  Up button (prints an arrow)
+                fprint_wide(out,0x2191);  //  Up button (prints an arrow)
                 break;
             case 0xe07a:
-                fprintf(out,"%lc",0x2193);  //  Down button (prints an arrow)
+                fprint_wide(out,0x2193);  //  Down button (prints an arrow)
                 break;
             default:
-                fprintf(out,"%lc",str[i]);
+                fprint_wide(out,str[i]);
                 break;
         }
     }
@@ -166,7 +146,7 @@ int fprint_TXT_func(FILE *out, char16 * func, bool simple)
         if(func[1]==0x0000 && func[2]==0x0000)  //  Will print only ruby chars
         {
             for(int i=0; i<(func[5]/2); i++)
-                fprintf(out,"%lc",func[6+i]);
+                fprint_wide(out,func[6+i]);
             func_len += func[4]/2;
         }
         if(func[1]==0x0000 && func[2]==0x0004 && func[3]==0x0000)

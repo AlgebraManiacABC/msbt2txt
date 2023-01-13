@@ -13,6 +13,8 @@ A program that turns (u)msbt files into more readable txt files
 
         -s                  simplify the output (don't print functions)
 
+Now comes with a script for easy mass-conversion! Also, for Windows reasons, it was easier to use python to delete files than `rm`. If you really don't want to use python with the Makefile, just replace the clean command, or don't use it at all.
+
 
 Credits to Cuyler, Slattz, Aeon, and the many members of the Animal Crossing Spreadsheets Team!
 

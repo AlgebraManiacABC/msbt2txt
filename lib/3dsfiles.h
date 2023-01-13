@@ -7,6 +7,7 @@
 #include <ctype.h>
 #include <locale.h>
 #include <getopt.h>
+#include <unistd.h>
 
 #ifndef CORRUPT
 #define CORRUPT puts("File is wrong type, invalid, or corrupt.")

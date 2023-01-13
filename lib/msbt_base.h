@@ -5,6 +5,7 @@
 #include "msbt_free.h"
 #include "msbt_txt.h"
 #include "msbt_func.h"
+#include "print_wide.h"
 
 /**
  * Prints information about the msbt2txt function and its arguments. 

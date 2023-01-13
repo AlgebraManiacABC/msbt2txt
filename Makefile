@@ -14,9 +14,12 @@ LIBS:=${filter-out ${LDIR}/main.h, ${patsubst ${SDIR}/%, ${LDIR}/%, ${SRCS:%.c=%
 msbt2txt: ${OBJS}
 	${CC} $^ -o $@ -I ${LDIR} ${CFLAGS}
 
-${ODIR}/%.o: ${SDIR}/%.c ${LIBS}
+${ODIR}/%.o: ${SDIR}/%.c ${LIBS} | $(ODIR)
 	${CC} -c ${filter-out %.h,$^} -I ${LDIR} -o $@ ${CFLAGS}
 
+$(ODIR):
+	mkdir $(ODIR)
+
 clean:
-	rm ./build/*.o
-	rm ./msbt2txt
+	python3 $(SDIR)/rmrf.py msbt2txt
+	python3 $(SDIR)/rmrf.py $(ODIR)
