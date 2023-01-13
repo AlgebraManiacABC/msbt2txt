@@ -2,13 +2,38 @@
 
 void fprint_TXT_str(FILE *out, char16 * str, bool simple)
 {
+    //bool just_printed_space = false;
+    //bool space_to_tab = false;
     for(int i=0; str[i]; i++)
     {
+    /*
+        if(just_printed_space && str[i] == 0x20)
+        {
+            space_to_tab = true;
+            continue;
+        }
+        if(space_to_tab && str[i] != 0x20)
+        {
+            space_to_tab = false;
+            fprintf(out,"\t");
+        }
+        if(just_printed_space && str[i] != 0x20)
+        {
+            just_printed_space = false;
+        }
+    */
+
         switch(str[i])
         {
             case 0x000e:
                 i += fprint_TXT_func(out,str+i,simple);    //  Function
                 break;
+            /*
+            case 0x0020:
+                fprintf(out," ");           //  Space button, but if multiple appear, use a tab instead.
+                just_printed_space = true;
+                break;
+            */
             case 0xe000:
             case 0xe042:
                 fprintf(out,"%lc",0x24b6);  //  A button
@@ -83,6 +108,12 @@ void fprint_TXT_str(FILE *out, char16 * str, bool simple)
                 break;
             case 0xe02d:
                 fprintf(out,"%lc",0x2716);  //  Dig-spot (x)
+                break;
+            case 0xe033:
+                fprintf(out,"lc",0x266a);   //  Eighth note
+                break;
+            case 0xe034:
+                fprintf(out,"%lc",0x266b);  //  Double eighth note
                 break;
             case 0xe037:
                 fprintf(out,"%lc",0x26a0);  //  Warning sign
